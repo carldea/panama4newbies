@@ -1,0 +1,11 @@
+release/
+target/
+.idea/
+*.iml
+*/*.iml
+.DS_Store
+classes/
+generated/
+a.out
+pointers_exe
+structs_exe
