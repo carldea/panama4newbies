@@ -27,7 +27,7 @@ $ ./structs_exe
 
 Generate Java Panama code (from stdio.h)
 ```shell
-$ ./compile_PointersAndStructs.java.sh
+$ ./jextract_PointersAndStructs.java.sh
 ```
 
 Run Java Panama PointersAndStructs example using C functions

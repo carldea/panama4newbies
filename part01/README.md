@@ -1,3 +1,5 @@
+
+
 # Panama 4 Newbies
 This is a quick intro to OpenJDK's Project Panama.
 - Part 1  https://foojay.io/today/project-panama-for-newbies-part-1
@@ -19,7 +21,7 @@ $ ./a.out
 
 Generate Java Panama code (from stdio.h)
 ```shell
-$ ./compile_HelloWorld.java.sh
+$ ./jextract_HelloWorld.java.sh
 ```
 Run Java Panama Hello World using C functions
 ```shell
