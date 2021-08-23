@@ -5,15 +5,7 @@ rm -rf generated/src
 # jextract stdio.h
 jextract --source -d generated/src -t org.unix \
   -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/stdio.h
-
-# add to classes
-javac -d classes generated/src/org/unix/*.java
-
-# jextract time.h
-jextract --source -d generated/src -t org.unix.time \
-  -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include \
-   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/time.h
+  foo.h
 
 # add to classes (IMPORTANT: Notice namespace ..src/org/unix/time/..)
-javac -d classes generated/src/org/unix/time/*.java
+javac -d classes generated/src/org/unix/*.java

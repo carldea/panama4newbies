@@ -2,9 +2,8 @@ import jdk.incubator.foreign.*;
 import java.util.Date;
 
 import static jdk.incubator.foreign.CLinker.*;
-import static org.unix.stdio_h.*;
-import static org.unix.time.time_h.*;
-import org.unix.time.tm;
+import static org.unix.foo_h.*;
+import org.unix.tm;
 
 /**
  * Panama 4 newbies demo of calling time.h functions.
