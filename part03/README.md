@@ -51,3 +51,58 @@ The output is shown below:
 3. C's tm struct getters tm_hour, tm_min, tm_sec. 20:47:08
 4. C's asctime() function to display date time: Sun Aug 22 20:47:08 2021
 ```
+
+
+### SDL Example: SDL Foo (Optional)
+A CPP program demonstrating the use of the [SDL2](https://www.libsdl.org/) library
+(a cross-platform development library designed to provide low level access to audio, keyboard, mouse, joystick, and graphics hardware via OpenGL and Direct3D).
+
+Compile  program (optional)
+```shell
+$ ./compile_sdlfoo.cpp.sh
+```
+
+Run the SDL foo CPP program (optional)
+```shell
+$ ./sdlfoo_exe
+```
+
+The output will open a window with moving green flag.
+
+![sdlfoo native screenshot](sdlfoo.cpp.png)
+
+Either close the window with the close button or by typing `q`.
+
+### SDL Example: SDL Foo with Panama
+A Java program that will call into SDL library.
+
+Before anything make sure to install the SDL2 library, 
+
+```shell
+$ brew install sdl2
+```
+
+Note this example leverages _Homebrew_ and the shell scripts relies on the paths
+set up by homebrew, a different installation method is likely to require different paths. 
+
+In order to run this example we need to make `jextract` generates the mappings 
+for these two libraries
+- `SDL.h`
+- `SDL_opengl.h`
+
+Use `jextract` tool to create the Java Source code and compile to the `classes` directory.
+```shell
+$ ./jextract_sdlfoo.h.sh
+```
+
+Run `SDLFoo.java`
+```bash
+$ ./run_SDLFoo.java.sh
+```
+
+You may notice the `-XstartOnFirstThread` option, this option is required on
+macOs to run the `main()` method on the first (AppKit) thread.
+
+The output is shown below:
+
+![sdlfoo panama](sdlfoo-panama.gif)

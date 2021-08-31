@@ -8,4 +8,4 @@ jextract --source -d generated/src -t org.unix \
   foo.h
 
 # add to classes (IMPORTANT: Notice namespace ..src/org/unix/time/..)
-javac -d classes generated/src/org/unix/*.java
+javac --add-modules=jdk.incubator.foreign -d classes generated/src/org/unix/*.java
