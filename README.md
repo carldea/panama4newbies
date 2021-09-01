@@ -1,4 +1,4 @@
-# Panama 4 Newbies
+# Panama 4 Newbies <img align="right" src="https://i.ibb.co/QPDhWPZ/Works-with-Open-JDK.png" width="100">
 This is a quick intro to OpenJDK's Project Panama.
 - Part 1  https://foojay.io/today/project-panama-for-newbies-part-1
 - Part 2  https://foojay.io/today/project-panama-for-newbies-part-2
