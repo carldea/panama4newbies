@@ -3,8 +3,11 @@
         src="https://github.com/foojayio/badges/raw/main/works_with_openjdk/Works-with-OpenJDK.png"   
         width="100">
 </a>
+
 # Panama 4 Newbies 
+
 This is a quick intro to OpenJDK's Project Panama.
+
 - Part 1  https://foojay.io/today/project-panama-for-newbies-part-1
 - Part 2  https://foojay.io/today/project-panama-for-newbies-part-2
 - Part 3  https://foojay.io/today/project-panama-for-newbies-part-3
