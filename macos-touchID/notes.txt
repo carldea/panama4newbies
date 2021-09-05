@@ -1,5 +1,0 @@
-swiftc func.swift -emit-library
-swiftc -emit-library main.swift
-
-gcc -lstdc++ -c bin/main.o bin/lib -o link
-
