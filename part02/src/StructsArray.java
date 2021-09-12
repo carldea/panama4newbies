@@ -8,34 +8,12 @@ import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
 
 
 /**
- * Panama Pointers and Structs
+ * Panama Structs Array
  */
-public class PointersAndStructs {
+public class StructsArray {
     public static void main(String[] args) {
       try (var scope = newConfinedScope()) {
-        System.out.println("\nCreating Pointers:");
         var allocator = SegmentAllocator.ofScope(scope);
-
-        // int x = 5;
-        var x = allocator.allocate(C_INT, 5);
-
-        // int *ptr;
-        MemoryAddress address = x.address();             // obtain address
-
-        // ptr = &x;
-        MemorySegment ptr = address.asSegment(4, scope); // segment is 4 bytes long
-
-        // Output value: x = 5 and ptr's value = 5
-        System.out.printf("           x = %d    address = %x %n", MemoryAccess.getInt(x), x.address().toRawLongValue());
-        System.out.printf(" ptr's value = %d    address = %x %n", MemoryAccess.getInt(ptr), ptr.address().toRawLongValue());
-
-         // Change x = 10;
-        MemoryAccess.setInt(x, 10);
-        System.out.printf(" Changing x's value to: %d %n", MemoryAccess.getInt(x));
-
-        // Output after change
-        System.out.printf("           x = %d    address = %x %n", MemoryAccess.getInt(x), x.address().toRawLongValue());
-        System.out.printf(" ptr's value = %d    address = %x %n", MemoryAccess.getInt(ptr), ptr.address().toRawLongValue());
 
         /*
             struct Point {
@@ -43,19 +21,10 @@ public class PointersAndStructs {
                int y;
             };
         */
-        System.out.println("\nCreate one Point struct:");
         GroupLayout pointStruct = MemoryLayout.structLayout(
                 C_INT.withName("x"),
                 C_INT.withName("y")
         );
-
-        var cPoint = allocator.allocate(pointStruct);
-        VarHandle VHx = pointStruct.varHandle(int.class, MemoryLayout.PathElement.groupElement("x"));
-        VarHandle VHy = pointStruct.varHandle(int.class, MemoryLayout.PathElement.groupElement("y"));
-        VHx.set(cPoint, 100);
-        VHy.set(cPoint, 200);
-
-        System.out.printf("cPoint = (%d, %d) \n",  VHx.get(cPoint), VHy.get(cPoint));
 
         System.out.println("\nCreate A Sequence of Point structs:");
         SequenceLayout seqStruct = MemoryLayout.sequenceLayout(5, pointStruct);
