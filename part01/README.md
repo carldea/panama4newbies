@@ -1,10 +1,8 @@
-
-
 # Panama 4 Newbies
 This is a quick intro to OpenJDK's Project Panama.
 - Part 1  https://foojay.io/today/project-panama-for-newbies-part-1
 
-## Part 1 - Learning jextract and C primitive types
+## Part 1 - Learning jextract and C strings, primitives and arrays types
 Clean up executables and generated code from jextract.
 ```bash
 $ ./clean.sh
@@ -14,6 +12,7 @@ Compile a Hello World C program (optional)
 ```shell
 $ ./compile_helloworld.c.sh
 ```
+
 Run Hello World C program (optional)
 ```shell
 $ ./a.out
@@ -21,18 +20,37 @@ $ ./a.out
 
 Generate Java Panama code (from stdio.h)
 ```shell
-$ ./jextract_HelloWorld.java.sh
+$ jextract_stdio.h.sh
 ```
+
 Run Java Panama Hello World using C functions
 ```shell
 $ ./run_HelloWorld.java.sh
 ```
+
 Output shows the following:
 
 ```shell
-Hello World
-Hello, Panama from a C string. 
+Hello World! Panama style
+```
+
+Run Java Panama program creating C double.
+```shell
+$ ./run_Primitive.java.sh
+```
+
+Output shows the following:
+```shell
 A slice of 3.141593 
+```
+
+Run Java Panama program creating an array of type C double.
+```shell
+$ ./run_PrimitiveArray.java.sh
+```
+
+Output shows the following:
+```shell
 An array of data
  1.000000  2.000000  3.000000  4.000000 
  1.000000  1.000000  1.000000  1.000000 
