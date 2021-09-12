@@ -14,6 +14,7 @@ public class HelloWorld {
        try (var scope = newConfinedScope()) {
            // MemorySegment C's printf using a C string
            var cString = toCString("Hello World\n", scope);
+
            // int printf(const char *format, ...);  a variadic function
            printf(cString);
            fflush(__stdoutp$get());
@@ -43,6 +44,7 @@ public class HelloWorld {
                }
                System.out.printf(" %f ", MemoryAccess.getDoubleAtIndex(cDoubleArray, i));
            }
+           System.out.println();
        }
     }
 }
