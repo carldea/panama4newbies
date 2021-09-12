@@ -7,17 +7,15 @@ import static org.unix.stdio_h.fflush;
 import static org.unix.stdio_h.printf;
 
 /**
- * Panama Hello World calling C functions.
+ * Creating primitive values such as a C double.
  */
-public class HelloWorld {
+public class Primitive {
     public static void main(String[] args) {
        try (var scope = newConfinedScope()) {
-           // MemorySegment C's printf using a C string
-           MemorySegment cString = toCString("Hello World! Panama style\n", scope);
-
-           // int printf(const char *format, ...);  a variadic function
-           printf(cString);
-           fflush(__stdoutp$get());
+           // Creating a C double
+           var allocator = SegmentAllocator.ofScope(scope);
+           var cDouble = allocator.allocate(C_DOUBLE, Math.PI);
+           printf(toCString("A slice of %f \n", scope), MemoryAccess.getDouble(cDouble));
        }
     }
 }
