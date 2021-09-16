@@ -16,4 +16,4 @@ jextract --source -d classes -t speech -l speechcpp -I /Applications/Xcode.app/C
 jextract -d classes -t speech -l speechcpp -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include speech.h
 
 # Run java class
-java -cp .:classes --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign Speech.java $1
+java -cp .:classes --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign Speech.java "$*"

@@ -9,7 +9,3 @@ extern void c_authenticate_user() {
    authenticate_user(); // calling swift
 }
 
-extern int main(){
-    authenticate_user();    // Prompts to authenticate. 
-    return 0;
-}
