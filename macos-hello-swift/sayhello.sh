@@ -1,7 +1,3 @@
-# clean up
-rm -rf classes
-rm *.dylib
-
 # Create a swift library
 swiftc sayhello.swift -emit-library -o libsayhelloswift.dylib
 
