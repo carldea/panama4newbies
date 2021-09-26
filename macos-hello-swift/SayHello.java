@@ -1,14 +1,19 @@
-import jdk.incubator.foreign.ResourceScope;
+import jdk.incubator.foreign.*;
+import java.lang.invoke.*;
 
-
-import static sayhello.sayhello_h.c_say_hello;
 
 public class SayHello {
     public static void main(String[] args) {
-        System.out.println(System.getProperty("java.library.path"));
-
+       System.out.println(System.getProperty("java.library.path"));
+       System.loadLibrary("sayhelloswift");
+       var f = CLinker.getInstance().downcallHandle(
+          SymbolLookup.loaderLookup().lookup("say_hello").get(),
+          MethodType.methodType(void.class),
+          FunctionDescriptor.ofVoid()
+       );
+          
        try (ResourceScope scope= ResourceScope.newConfinedScope()) {
-           c_say_hello();
+         f.invokeExact();  
        } catch (Throwable throwable) {
            throwable.printStackTrace();
        }
