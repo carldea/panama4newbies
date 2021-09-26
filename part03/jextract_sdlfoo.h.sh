@@ -10,3 +10,11 @@ jextract --source -d generated/src -t sdl2 \
 
 # add to classes (IMPORTANT: Notice namespace ..src/sdl2/..)
 javac --add-modules=jdk.incubator.foreign -d classes generated/src/sdl2/*.java
+
+jextract --source -d generated/src -t org.unix \
+  -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include \
+  foo.h
+
+jextract -d classes -t org.unix \
+  -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include \
+  foo.h
