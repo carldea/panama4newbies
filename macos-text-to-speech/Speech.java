@@ -1,11 +1,15 @@
-import jdk.incubator.foreign.CLinker;
-import jdk.incubator.foreign.ResourceScope;
+import jdk.incubator.foreign.*;
+import java.lang.invoke.*;
 
-
-import static speech.speech_h.c_say_something;
 
 public class Speech {
     public static void main(String[] args) throws Exception {
+       System.loadLibrary("speechswift");
+       var f = CLinker.getInstance().downcallHandle(
+          SymbolLookup.loaderLookup().lookup("say_something").get(),
+          MethodType.methodType(void.class, MemoryAddress.class),
+          FunctionDescriptor.ofVoid(CLinker.C_POINTER)
+       );       
        try (ResourceScope scope= ResourceScope.newConfinedScope()) {
            String say = null;
            if (args == null || args.length == 0) {
@@ -18,7 +22,7 @@ public class Speech {
                }
            }
            System.out.println("Saying: " + say);
-           c_say_something(CLinker.toCString(say, scope));
+           f.invokeExact(CLinker.toCString(say, scope).address());
        } catch (Throwable throwable) {
            throwable.printStackTrace();
        }
