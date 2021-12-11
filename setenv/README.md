@@ -6,30 +6,37 @@ In C you can set and get environment variables. This way child processes can run
 $ export JAVA_HOME=<java_home_dir>
 $ export PATH=$JAVA_HOME/bin:$PATH
 
+# generate panama code
 $ bash jextract_foo.h.sh
-$ bash run_SetEnv.java.sh
+
+# run example pass in a new JAVA_HOME 
+$ bash run_SetEnv.java.sh ~/sdks/zulu11.43.55-ca-fx-jdk11.0.9.1-macosx_x64
 ```
 You should see the following:
 ```shell
-$ bash run_SetEnv.java.sh 
 WARNING: Using incubator modules: jdk.incubator.foreign
 warning: using incubating module(s): jdk.incubator.foreign
 1 warning
 
-[Before] JAVA_HOME=/Users/cdea/sdks/jdk-17.jdk/Contents/Home/
-java -version
+[Before] JAVA_HOME=/Users/jdoe/sdks/jdk-17.jdk/Contents/Home/
+[Before] PATH=/Users/jdoe/sdks/jdk-17.jdk/Contents/Home//bin:/Users/cdea/sdks/zulu11.43.55-ca-fx-jdk11.0.9.1-macosx_x64/bin:/Users/cdea/.sdkman/candidates/micronaut/current/bin:/Users/cdea/.sdkman/candidates/java/current/bin:/Users/cdea/.sdkman/candidates/gradle/current/bin:/Users/cdea/projects/project-harvey/server/bin:/bin:/Users/cdea/sdks/apache-maven-3.6.3/bin:/bin:/usr/local/opt/openssl/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Library/Apple/usr/bin:.bach/bin
+Executing java -version
 openjdk version "17-panama" 2021-09-14
 OpenJDK Runtime Environment (build 17-panama+3-167)
 OpenJDK 64-Bit Server VM (build 17-panama+3-167, mixed mode, sharing)
 
-[After] JAVA_HOME=/Downloads/sdks/zulu16.0.89-ea-jdk16.0.0-ea.36-macosx_x64
+[After] JAVA_HOME=/Users/jdoe/sdks/zulu11.43.55-ca-fx-jdk11.0.9.1-macosx_x64
+[After] PATH=/Users/jdoe/sdks/zulu11.43.55-ca-fx-jdk11.0.9.1-macosx_x64/bin:/Users/jdoe/sdks/jdk-17.jdk/Contents/Home//bin:/Users/jdoe/sdks/zulu11.43.55-ca-fx-jdk11.0.9.1-macosx_x64/bin:/Users/jdoe/.sdkman/candidates/micronaut/current/bin:/Users/jdoe/.sdkman/candidates/java/current/bin:/Users/jdoe/.sdkman/candidates/gradle/current/bin:/Users/jdoe/projects/project-harvey/server/bin:/bin:/Users/jdoe/sdks/apache-maven-3.6.3/bin:/bin:/usr/local/opt/openssl/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Library/Apple/usr/bin:.bach/bin
 java -version
-openjdk version "17-panama" 2021-09-14
-OpenJDK Runtime Environment (build 17-panama+3-167)
-OpenJDK 64-Bit Server VM (build 17-panama+3-167, mixed mode, sharing)
+openjdk version "11.0.9.1" 2020-11-04 LTS
+OpenJDK Runtime Environment Zulu11.43+55-CA (build 11.0.9.1+1-LTS)
+OpenJDK 64-Bit Server VM Zulu11.43+55-CA (build 11.0.9.1+1-LTS, mixed mode)
 ```
-**NOTE:**
-Not working as expected?
-Notice the After section should be using java 16.
-Child process' environmental variables should take on current settings.
-Help me figure why?
+**Note:**
+The example changes the environment variable for child processes. For example in Panama code the following is executed subsequently:
+```java
+    // code to change PATH environment variable.
+    MemorySegment java_cstr2 = CLinker.toCString("java -version", allocator);
+    foo_h.system(java_cstr2);
+```
+The child process `system()` function will run using the new PATH value.
