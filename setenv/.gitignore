@@ -1,0 +1,14 @@
+release/
+target/
+.idea/
+*.iml
+*/*.iml
+.DS_Store
+classes/
+generated/
+a.out
+*.dylib
+*.so
+*.dll
+hs_err_pid*.log
+out/
