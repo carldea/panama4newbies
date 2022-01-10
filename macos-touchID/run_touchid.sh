@@ -1,2 +1,2 @@
 # Run java class
-java -cp .:classes --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign TouchID.Java
+env JAVA_LIBRARY_PATH=:/usr/local/lib:. java -cp .:classes -Djava.library.path=. --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign TouchID

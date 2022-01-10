@@ -1,9 +1,6 @@
 
 
-import jdk.incubator.foreign.CLinker;
-import jdk.incubator.foreign.MemoryAddress;
-import jdk.incubator.foreign.MemorySegment;
-import jdk.incubator.foreign.ResourceScope;
+import jdk.incubator.foreign.*;
 import sdl2.SDL_Event;
 import sdl2.SDL_TextInputEvent;
 
@@ -121,7 +118,7 @@ public class SDLFoo {
           // Handle keypress with current mouse position
           else if (SDL_Event.type$get(sdlEvent) == SDL_TEXTINPUT()) {
             // e.text.text[ 0 ]
-            char c = CLinker.toJavaString(SDL_TextInputEvent.text$slice(sdlEvent)).charAt(0);
+            char c = SDL_TextInputEvent.text$slice(sdlEvent).getUtf8String(0).charAt(0);
             if (c == 'q') {
               quit = true;
             }
@@ -144,7 +141,7 @@ public class SDLFoo {
 
   private boolean init(ResourceScope scope) {
     if (SDL_Init(SDL_INIT_VIDEO()) < 0) {
-      String errMsg = CLinker.toJavaString(SDL_GetError());
+      String errMsg = SDL_GetError().getUtf8String(0);
       System.out.printf("SDL could not initialize! SDL Error: %s\n", errMsg);
       return false;
     } else {
@@ -152,7 +149,7 @@ public class SDLFoo {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION(), 1);
 
 
-      gWindow = SDL_CreateWindow(CLinker.toCString("SDL for Panama", scope),
+      gWindow = SDL_CreateWindow(SegmentAllocator.implicitAllocator().allocateUtf8String("SDL for Panama"),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SCREEN_WIDTH,
@@ -160,18 +157,18 @@ public class SDLFoo {
                                  SDL_WINDOW_OPENGL() | SDL_WINDOW_SHOWN());
 
       if (Objects.equals(NULL, gWindow)) {
-        System.out.printf("Window could not be created! SDL Error: %s\n", CLinker.toJavaString(SDL_GetError()));
+        System.out.printf("Window could not be created! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
         return false;
       } else {
         // Initialize opengl
         gContext = SDL_GL_CreateContext(gWindow);
         if (Objects.equals(NULL, gContext)) {
-          System.out.printf("OpenGL context could not be created! SDL Error: %s\n", CLinker.toJavaString(SDL_GetError()));
+          System.out.printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
           return false;
         } else {
           //Use Vsync
           if (SDL_GL_SetSwapInterval(1) < 0) {
-            System.out.printf("Warning: Unable to set VSync! SDL Error: %s\n", CLinker.toJavaString(SDL_GetError()));
+            System.out.printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
           }
 
 

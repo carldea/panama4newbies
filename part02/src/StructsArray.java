@@ -5,6 +5,7 @@ import java.util.Random;
 
 import static jdk.incubator.foreign.CLinker.*;
 import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
+import static org.unix.stdio_h.C_INT;
 
 
 /**
@@ -13,7 +14,7 @@ import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
 public class StructsArray {
     public static void main(String[] args) {
       try (var scope = newConfinedScope()) {
-        var allocator = SegmentAllocator.ofScope(scope);
+        var allocator = SegmentAllocator.implicitAllocator();
 
         /*
             struct Point {
@@ -30,10 +31,10 @@ public class StructsArray {
         SequenceLayout seqStruct = MemoryLayout.sequenceLayout(5, pointStruct);
         MemorySegment points = allocator.allocate(seqStruct);
 
-        var VHSeq_x = seqStruct.varHandle(int.class,
+        var VHSeq_x = seqStruct.varHandle(
                 MemoryLayout.PathElement.sequenceElement(),
                 MemoryLayout.PathElement.groupElement("x"));
-        var VHSeq_y = seqStruct.varHandle(int.class,
+        var VHSeq_y = seqStruct.varHandle(
                 MemoryLayout.PathElement.sequenceElement(),
                 MemoryLayout.PathElement.groupElement("y"));
 

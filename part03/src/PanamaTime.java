@@ -13,7 +13,7 @@ public class PanamaTime {
     public static void main(String[] args) {
         // obtain a scope
         try (var scope = ResourceScope.newConfinedScope()) {
-            var allocator = SegmentAllocator.ofScope(scope);
+            var allocator = SegmentAllocator.implicitAllocator();
 
             // The variable now of type MemorySegment holds a C long type. The allocate method will create space.
             // time_t * (clong seconds since epoch) probable type is from a typedef long time_t; (64 bit)
@@ -25,13 +25,13 @@ public class PanamaTime {
             var now2 = allocator.allocate(time_t);
 
             // Get contents of now (java epoch seconds)
-            long secondsSinceEpoch1 = MemoryAccess.getLong(now);
+            long secondsSinceEpoch1 = now.get(C_LONG, 0);
 
             // Populate now2 with (C's epoch seconds) and returns as a Java long.
             long secondsSinceEpoch2 = time(now2);
 
             // Get contents of now2 (C's epoch seconds) return as a Java long.
-            long secondsSinceEpoch3 = MemoryAccess.getLong(now2);
+            long secondsSinceEpoch3 = now2.get(C_LONG, 0);
 
             assert secondsSinceEpoch1 == secondsSinceEpoch2 && secondsSinceEpoch2 == secondsSinceEpoch3;
 
@@ -48,21 +48,21 @@ public class PanamaTime {
             // struct tm *localtime_r( const time_t * epochSeconds, struct tm * tmStruct );
             localtime_r(now2, pTmStruct);
 
-            // Using pointer offsets to grab integers in memory (see struct in comments at the end). 4 bytes
-            var secondsCInt = MemoryAccess.getIntAtOffset(pTmStruct, 0);
-            var minuteCInt = MemoryAccess.getIntAtOffset(pTmStruct, 4);
-            var hourCInt = MemoryAccess.getIntAtOffset(pTmStruct, 8);
+            // obtaining values based the offset into the tm struct.
+            var seconds = pTmStruct.get(C_INT, 0);
+            var minutes = pTmStruct.get(C_INT, 4);
+            var hours = pTmStruct.get(C_INT, 8);
 
-            var cString = toCString("2. C's printf & tm Struct of local time. %02d:%02d:%02d\n", scope);
-            printf(cString, hourCInt, minuteCInt, secondsCInt);
+            var cString = allocator.allocateUtf8String("2. C's printf & tm Struct of local time. %02d:%02d:%02d\n");
+            printf(cString, hours, minutes, seconds);
             fflush(__stdoutp$get());
 
-            // After invocation the time struct will
+            // Obtaining values based on the tm struct from jextract
             System.out.printf("3. C's tm struct getters tm_hour, tm_min, tm_sec. %02d:%02d:%02d\n",
                     tm.tm_hour$get(pTmStruct), tm.tm_min$get(pTmStruct), tm.tm_sec$get(pTmStruct));
 
             // Call time.h asctime() function to display date time.
-            printf(toCString("4. C's asctime() function to display date time: %s\n", scope), asctime(pTmStruct));
+            printf(allocator.allocateUtf8String("4. C's asctime() function to display date time: %s\n"), asctime(pTmStruct));
         }
     }
 }

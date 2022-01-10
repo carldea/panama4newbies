@@ -7,7 +7,15 @@ Clean up executables and generated code from jextract.
 ```bash
 $ ./clean.sh
 ```
-
+### Java Pid example using method handles (no jextract)
+```shell
+./run_PanamaPid.java.sh
+```
+Output should be the following:
+```shell
+MethodHandle calling getpid() (16465)
+Jextract's calling getpid()   (16465)
+```
 ### C Example: Local time (Optional)
 A C program demonstrating the use of time.h 
 

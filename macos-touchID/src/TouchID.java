@@ -1,14 +1,15 @@
 import jdk.incubator.foreign.*;
-import java.lang.invoke.*;
+
 
 //import static touchid.touchid_h.c_authenticate_user;
 
-public class SayHello {
+public class TouchID {
     public static void main(String[] args) {
        System.loadLibrary("touchidswift");
-       var f = CLinker.getInstance().downcallHandle(
-          SymbolLookup.loaderLookup().lookup("authenticate_user").get(),
-          MethodType.methodType(void.class),
+       var cLinker = CLinker.systemCLinker();
+        System.out.println(cLinker.lookup("authenticate_user").get());
+       var f = cLinker.downcallHandle(
+          cLinker.lookup("authenticate_user").get(),
           FunctionDescriptor.ofVoid()
        );
        try (ResourceScope scope= ResourceScope.newConfinedScope()) {

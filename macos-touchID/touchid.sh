@@ -5,4 +5,4 @@ rm *.dylib
 swiftc touchid.swift -emit-library -o libtouchidswift.dylib
 
 # Run java class
-java -cp .:classes --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign TouchID.Java
+java -cp .:classes --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign src/TouchID.Java
