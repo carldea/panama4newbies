@@ -22,7 +22,9 @@ public func authenticateUser() {
              }
       })
 
-    while runme {}
+    while runme {
+       //print("inside runme")
+    }
 
    } else {
       let ac = "Touch ID not available, Or Your device is not configured for Touch ID."

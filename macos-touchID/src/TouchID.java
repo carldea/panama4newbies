@@ -6,14 +6,14 @@ import jdk.incubator.foreign.*;
 public class TouchID {
     public static void main(String[] args) {
        System.loadLibrary("touchidswift");
-       var cLinker = CLinker.systemCLinker();
-        System.out.println(cLinker.lookup("authenticate_user").get());
-       var f = cLinker.downcallHandle(
-          cLinker.lookup("authenticate_user").get(),
-          FunctionDescriptor.ofVoid()
-       );
        try (ResourceScope scope= ResourceScope.newConfinedScope()) {
-           //c_authenticate_user();
+           var cLinker = CLinker.systemCLinker();
+           System.out.println(cLinker.lookup("authenticate_user").get());
+           var f = cLinker.downcallHandle(
+                   cLinker.lookup("authenticate_user").get(),
+                   FunctionDescriptor.ofVoid()
+           );
+
            f.invokeExact();
        } catch (Throwable throwable) {
            throwable.printStackTrace();
