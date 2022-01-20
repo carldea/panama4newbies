@@ -7,12 +7,11 @@ public class TouchID {
     public static void main(String[] args) {
        System.loadLibrary("touchidswift");
        try (ResourceScope scope= ResourceScope.newConfinedScope()) {
-           var cLinker = CLinker.systemCLinker();
-           System.out.println(cLinker.lookup("authenticate_user").get());
-           var f = cLinker.downcallHandle(
-                   cLinker.lookup("authenticate_user").get(),
-                   FunctionDescriptor.ofVoid()
-           );
+           var  symbolLookup = SymbolLookup.loaderLookup();
+           var nativeSymbol = symbolLookup.lookup("authenticate_user").get();
+           System.out.println();
+           var f = CLinker.systemCLinker()
+                   .downcallHandle(nativeSymbol, FunctionDescriptor.ofVoid());
 
            f.invokeExact();
        } catch (Throwable throwable) {
