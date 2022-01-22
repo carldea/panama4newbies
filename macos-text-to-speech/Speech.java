@@ -1,15 +1,19 @@
 import jdk.incubator.foreign.*;
 import java.lang.invoke.*;
 
+import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
+
 
 public class Speech {
     public static void main(String[] args) throws Exception {
        System.loadLibrary("speechswift");
-       var f = CLinker.getInstance().downcallHandle(
-          SymbolLookup.loaderLookup().lookup("say_something").get(),
-          MethodType.methodType(void.class, MemoryAddress.class),
-          FunctionDescriptor.ofVoid(CLinker.C_POINTER)
-       );       
+
+        var  symbolLookup = SymbolLookup.loaderLookup();
+        var nativeSymbol = symbolLookup.lookup("say_something").get();
+
+        MethodHandle f;
+        f = CLinker.systemCLinker()
+                .downcallHandle(nativeSymbol, FunctionDescriptor.ofVoid(ValueLayout.OfAddress.ADDRESS));
        try (ResourceScope scope= ResourceScope.newConfinedScope()) {
            String say = null;
            if (args == null || args.length == 0) {
@@ -22,7 +26,8 @@ public class Speech {
                }
            }
            System.out.println("Saying: " + say);
-           f.invokeExact(CLinker.toCString(say, scope).address());
+           Addressable cString = implicitAllocator().allocateUtf8String(say.concat("\n"));
+           f.invokeExact(cString);
        } catch (Throwable throwable) {
            throwable.printStackTrace();
        }
