@@ -1,6 +1,5 @@
 import jdk.incubator.foreign.*;
 
-import static jdk.incubator.foreign.CLinker.*;
 import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
 import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
 import static org.unix.stdio_h.__stdoutp$get;
