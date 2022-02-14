@@ -6,7 +6,7 @@ void my_function() {
 }
 
 void my_callback_function(void (*ptrToFunction)()) {
-   printf("[C] Inside mydb's C function my_callback_function().\n");
+   printf("[C] Inside mylib's C function my_callback_function().\n");
    printf("[C]   Now invoking Java's callMePlease() static method.\n");
 
    // Calling the passed in callback
@@ -14,7 +14,7 @@ void my_callback_function(void (*ptrToFunction)()) {
 }
 
 void my_callback_function2(void (*ptrToFunction)(int)) {
-   printf("[C] Inside mydb's C function my_callback_function2().\n");
+   printf("[C] Inside mylib's C function my_callback_function2().\n");
    printf("[C]   Now invoking Java's doubleMe(int) static method.\n");
    int x = 123;
    (*ptrToFunction)(x);   //calling the callback function

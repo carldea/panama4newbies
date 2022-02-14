@@ -29,10 +29,10 @@ Output shows the following:
 
 ```text
 [Java] Callbacks! Panama style
-[C] Inside mydb's C function my_callback_function().
+[C] Inside mylib's C function my_callback_function().
 [C]   Now invoking Java's callMePlease() static method.
 [JAVA] Inside callMePlease() method - I'm being called from C.
-[C] Inside mydb's C function my_callback_function2().
+[C] Inside mylib's C function my_callback_function2().
 [C]   Now invoking Java's doubleMe(int) static method.
 [JAVA] Inside doubleMe() method, 123 times 2 = 246.
 ```
