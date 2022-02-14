@@ -7,3 +7,6 @@ target/
 classes/
 generated/
 a.out
+*.dylib
+out/
+*.dll
