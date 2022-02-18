@@ -39,8 +39,9 @@ public class PanamaCallback {
             MemorySegment cString = implicitAllocator()
                     .allocateUtf8String("[Java] Callbacks! Panama style\n");
 
-            foo_h.printf(cString);
+            printf(cString);
             fflush(__stdoutp$get());
+            //fprintf(__stdoutp$get(), cString);
 
             // my_callback_function C function receives a callback (pointer to a function)
             NativeSymbol callback1 = SymbolLookup.loaderLookup().lookup("my_callback_function").get();
