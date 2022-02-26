@@ -117,8 +117,8 @@ public class SDLFoo {
 
           // Handle keypress with current mouse position
           else if (SDL_Event.type$get(sdlEvent) == SDL_TEXTINPUT()) {
-            // e.text.text[ 0 ]
-            char c = SDL_TextInputEvent.text$slice(sdlEvent).getUtf8String(0).charAt(0);
+            var textSeg = SDL_TextInputEvent.text$slice(sdlEvent);
+            char c = textSeg.getUtf8String(0).charAt(0);
             if (c == 'q') {
               quit = true;
             }

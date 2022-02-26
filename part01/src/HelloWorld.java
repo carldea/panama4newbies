@@ -18,6 +18,9 @@ public class HelloWorld {
            // int printf(const char *format, ...);  a variadic function
            printf(cString);
            fflush(__stdoutp$get());
+
+           // converting a C string (MemorySegment) into a Java String
+           //System.out.println(cString.getUtf8String(0));
        }
     }
 }
