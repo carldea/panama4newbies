@@ -6,6 +6,7 @@ This is a quick intro to OpenJDK's Project Panama.
 - Part 1  https://foojay.io/today/project-panama-for-newbies-part-1
 - Part 2  https://foojay.io/today/project-panama-for-newbies-part-2
 - Part 3  https://foojay.io/today/project-panama-for-newbies-part-3
+- Part 4  https://foojay.io/today/project-panama-for-newbies-part-4
 
 ## Part 1 - Learning Java Panama and C primitive types
 Part 1 is where you'll learn about jextract and Panama APIs to create C primitive type data and use the printf() function from stdio.h.
@@ -18,6 +19,11 @@ https://github.com/carldea/panama4newbies/tree/main/part02
 ## Part 3 - Learning Java Panama and C based Third Party Libraries
 Part 3 is a chance to use Panama APIs to access third party libraries.
 https://github.com/carldea/panama4newbies/tree/main/part03
+
+## Part 4 - Learning Java Panama and C based Callbacks (Function Pointers)
+Part 4 is a chance to use Panama APIs to allow C code to talk to Java code.
+https://github.com/carldea/panama4newbies/tree/main/part04
+
 
 
 ## Setting up your IDE 
