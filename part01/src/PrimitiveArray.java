@@ -20,11 +20,11 @@ public class PrimitiveArray {
                    5.0, 6.0, 7.0, 8.0
            });
 
-           for (long i = 0; i < (4*4); i++) {
+           for (long i = 0; i < 16; i++) {
                if (i>0 && i % 4 == 0) {
                    System.out.println();
                }
-               System.out.printf(" %f ", cDoubleArray.get(C_DOUBLE, i * 8));
+               System.out.printf(" %f ", cDoubleArray.getAtIndex(C_DOUBLE, i ));
            }
            System.out.println();
        }

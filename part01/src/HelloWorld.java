@@ -20,7 +20,9 @@ public class HelloWorld {
            fflush(__stdoutp$get());
 
            // converting a C string (MemorySegment) into a Java String
-           //System.out.println(cString.getUtf8String(0));
+           String jString = cString.getUtf8String(0);
+           System.out.println(jString);
+           // Hello World! Panama style
        }
     }
 }
