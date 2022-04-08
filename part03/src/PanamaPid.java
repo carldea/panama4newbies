@@ -24,7 +24,8 @@ public class PanamaPid {
 
             // Using Jextract's getpid method.
             int jextractPid = foo_h.getpid();
-            System.out.printf("Jextract's calling getpid()   (%d)\n", jextractPid);
+            System.out.printf("Calling getpid()   (%d)\n", jextractPid);
+
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
