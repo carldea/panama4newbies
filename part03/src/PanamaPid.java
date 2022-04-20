@@ -2,6 +2,7 @@ import java.lang.invoke.*;
 import jdk.incubator.foreign.*;
 import org.unix.foo_h;
 
+import static jdk.incubator.foreign.ValueLayout.JAVA_INT;
 import static org.unix.foo_h.C_INT;
 
 /**
@@ -17,7 +18,7 @@ public class PanamaPid {
             var cLinker = CLinker.systemCLinker();
             // Using a MethodHandle
             MethodHandle getpidMH = cLinker.downcallHandle(cLinker.lookup("getpid").get(),
-                    FunctionDescriptor.of(C_INT));
+                    FunctionDescriptor.of(JAVA_INT));
 
             int pid	= (int) getpidMH.invokeExact();
             System.out.printf("MethodHandle calling getpid() (%d)\n", pid);

@@ -242,7 +242,7 @@ public class SDLPrism {
     glColor3fv(colorMemSeg.asSlice(index * 12)); // 3 floats = 3 X 4 bytes = 12 bytes
     glVertex3fv(cubeMemSeg.asSlice(index * 12));
   }
-  private void render(ResourceScope scope, MemorySegment colorMemSeg, MemorySegment cubeMemSeg) {
+  private void render(ResourceScope scope, MemorySegment colorMemSeg, MemorySegment vertexMemSeg) {
 
     /* Do our drawing, too. */
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -250,46 +250,25 @@ public class SDLPrism {
 
     glBegin(GL_TRIANGLES());
 
-/*
-static float[] prism = {
-          // front Face
-           0.0f,  1.0f, 0.0f,
-          -1.0f, -1.0f, 1.0f,
-           1.0f, -1.0f, 1.0f,
+    // Front face
+    colorEdge(colorMemSeg, vertexMemSeg, 0);
+    colorEdge(colorMemSeg, vertexMemSeg, 1);
+    colorEdge(colorMemSeg, vertexMemSeg, 2);
 
-          // Right face
-           0.0f, 1.0f, 0.0f,
-           1.0f, -1.0f, 1.0f,
-           1.0f, -1.0f, -1.0f,
-
-          // Back face
-           0.0f, 1.0f, 0.0f,
-           1.0f, -1.0f, -1.0f,
-          -1.0f, -1.0f, -1.0f,
-          // Left face
-           0.0f, 1.0f, 0.0f,
-          -1.0f,-1.0f,-1.0f,
-          -1.0f,-1.0f, 1.0f
-  };
- */
-    // Front
-    colorEdge(colorMemSeg, cubeMemSeg, 0);
-    colorEdge(colorMemSeg, cubeMemSeg, 1);
-    colorEdge(colorMemSeg, cubeMemSeg, 2);
-    // Right
-    colorEdge(colorMemSeg, cubeMemSeg, 3);
-    colorEdge(colorMemSeg, cubeMemSeg, 4);
-    colorEdge(colorMemSeg, cubeMemSeg, 5);
+    // Right face
+    colorEdge(colorMemSeg, vertexMemSeg, 3);
+    colorEdge(colorMemSeg, vertexMemSeg, 4);
+    colorEdge(colorMemSeg, vertexMemSeg, 5);
 
     // Back
-    colorEdge(colorMemSeg, cubeMemSeg, 6);
-    colorEdge(colorMemSeg, cubeMemSeg, 7);
-    colorEdge(colorMemSeg, cubeMemSeg, 8);
+    colorEdge(colorMemSeg, vertexMemSeg, 6);
+    colorEdge(colorMemSeg, vertexMemSeg, 7);
+    colorEdge(colorMemSeg, vertexMemSeg, 8);
 
     // Left
-    colorEdge(colorMemSeg, cubeMemSeg, 9);
-    colorEdge(colorMemSeg, cubeMemSeg, 10);
-    colorEdge(colorMemSeg, cubeMemSeg, 11);
+    colorEdge(colorMemSeg, vertexMemSeg, 9);
+    colorEdge(colorMemSeg, vertexMemSeg, 10);
+    colorEdge(colorMemSeg, vertexMemSeg, 11);
 
     //Clear color buffer
     glEnd();
