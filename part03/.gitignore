@@ -8,3 +8,5 @@ classes/
 generated/
 a.out
 *_exe
+src/org/
+src/sdl2/

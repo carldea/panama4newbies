@@ -5,4 +5,4 @@ rm *.dylib
 swiftc speech.swift -emit-library -o libspeechswift.dylib
 
 # Run java class
-java --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign Speech.java "$*"
+java --enable-native-access=ALL-UNNAMED --enable-preview --source 19 Speech.java "$*"

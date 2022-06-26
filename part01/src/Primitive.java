@@ -1,8 +1,5 @@
-import jdk.incubator.foreign.*;
 
-import static jdk.incubator.foreign.CLinker.*;
-import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
-import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
+import java.lang.foreign.MemorySession;
 import static org.unix.stdio_h.*;
 
 /**
@@ -10,11 +7,10 @@ import static org.unix.stdio_h.*;
  */
 public class Primitive {
     public static void main(String[] args) {
-       try (var scope = newConfinedScope()) {
+       try (var memorySession = MemorySession.openConfined()) {
            // Creating a C double
-           var allocator = implicitAllocator();
-           var cDouble = allocator.allocate(C_DOUBLE, Math.PI);
-           var msgStr = allocator.allocateUtf8String("A slice of %f \n");
+           var cDouble = memorySession.allocate(C_DOUBLE, Math.PI);
+           var msgStr = memorySession.allocateUtf8String("A slice of %f \n");
            printf(msgStr, cDouble.get(C_DOUBLE, 0));
        }
     }

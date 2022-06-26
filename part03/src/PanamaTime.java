@@ -1,7 +1,9 @@
-import jdk.incubator.foreign.*;
+
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
 import java.util.Date;
 
-import static jdk.incubator.foreign.CLinker.*;
+import static java.lang.foreign.MemoryAddress.NULL;
 import static org.unix.foo_h.*;
 import org.unix.tm;
 
@@ -12,17 +14,17 @@ import org.unix.tm;
 public class PanamaTime {
     public static void main(String[] args) {
         // obtain a scope
-        try (var scope = ResourceScope.newConfinedScope()) {
-            var allocator = SegmentAllocator.implicitAllocator();
+        try (var memorySession = MemorySession.openConfined()) {
+
 
             // The variable now of type MemorySegment holds a C long type. The allocate method will create space.
             // time_t * (clong seconds since epoch) probable type is from a typedef long time_t; (64 bit)
 
             // Populate now variable with a Java epoch seconds. C long
-            var now = allocator.allocate(C_LONG, System.currentTimeMillis() / 1000);
+            var now = memorySession.allocate(C_LONG, System.currentTimeMillis() / 1000);
 
             // Equivalent because time_t is a C_LONG
-            var now2 = allocator.allocate(time_t);
+            var now2 = memorySession.allocate(time_t);
 
             // Get contents of now (java epoch seconds)
             long secondsSinceEpoch1 = now.get(C_LONG, 0);
@@ -41,7 +43,7 @@ public class PanamaTime {
             // tm is a C struct with an allocate method to create space
             // by instantiating a MemorySegment (pointer to tm struct)
             // struct tm *
-            MemorySegment pTmStruct = tm.allocate(scope);
+            MemorySegment pTmStruct = tm.allocate(memorySession);
 
             // Calling the C function localtime_r(now, time); now contains seconds, and time is a blank struct.
             // [ptr to struct]        [ptr to time_t           ]   [ptr to tm struct     ]
@@ -49,20 +51,20 @@ public class PanamaTime {
             localtime_r(now2, pTmStruct);
 
             // obtaining values based the offset into the tm struct.
-            var seconds = pTmStruct.get(C_INT, 0);
-            var minutes = pTmStruct.get(C_INT, 4);
-            var hours = pTmStruct.get(C_INT, 8);
+            var seconds = tm.tm_sec$get(pTmStruct);
+            var minutes = tm.tm_min$get(pTmStruct);
+            var hours = tm.tm_hour$get(pTmStruct);
 
-            var cString = allocator.allocateUtf8String("2. C's printf & tm Struct of local time. %02d:%02d:%02d\n");
+            var cString = memorySession.allocateUtf8String("2. C's printf & tm Struct of local time. %02d:%02d:%02d\n");
             printf(cString, hours, minutes, seconds);
-            fflush(__stdoutp$get());
+            fflush(NULL);
 
             // Obtaining values based on the tm struct from jextract
             System.out.printf("3. C's tm struct getters tm_hour, tm_min, tm_sec. %02d:%02d:%02d\n",
                     tm.tm_hour$get(pTmStruct), tm.tm_min$get(pTmStruct), tm.tm_sec$get(pTmStruct));
 
             // Call time.h asctime() function to display date time.
-            printf(allocator.allocateUtf8String("4. C's asctime() function to display date time: %s\n"), asctime(pTmStruct));
+            printf(memorySession.allocateUtf8String("4. C's asctime() function to display date time: %s\n"), asctime(pTmStruct));
         }
     }
 }

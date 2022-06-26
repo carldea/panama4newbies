@@ -1,6 +1,6 @@
 env JAVA_LIBRARY_PATH=:/usr/local/lib java \
-  -cp .:classes \
+  -cp classes \
   -XstartOnFirstThread \
   --enable-native-access=ALL-UNNAMED \
-  --add-modules=jdk.incubator.foreign \
+  --enable-preview --source 19 \
   src/SDLFoo.java

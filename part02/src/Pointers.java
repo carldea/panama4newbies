@@ -1,12 +1,7 @@
-import jdk.incubator.foreign.*;
 
-import java.lang.invoke.VarHandle;
-import java.util.Random;
-
-import static jdk.incubator.foreign.CLinker.*;
-import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
-import static org.unix.stdio_h.C_INT;
-import static org.unix.stdio_h.C_POINTER;
+import java.lang.foreign.MemoryAddress;
+import java.lang.foreign.MemorySession;
+import static java.lang.foreign.ValueLayout.JAVA_INT;
 
 
 /**
@@ -14,12 +9,11 @@ import static org.unix.stdio_h.C_POINTER;
  */
 public class Pointers {
     public static void main(String[] args) {
-      try (var scope = newConfinedScope()) {
+      try (var memorySession = MemorySession.openConfined()) {
         System.out.println("\nCreating Pointers:");
-        var allocator = SegmentAllocator.implicitAllocator();
 
         // int x = 5;
-        var x = allocator.allocate(C_INT, 5);
+        var x = memorySession.allocate(JAVA_INT, 5);
 
         // int *ptr;
         MemoryAddress address = x.address();             // obtain address
@@ -28,17 +22,17 @@ public class Pointers {
         MemoryAddress ptr = address;
         //MemorySegment ptrVal = MemorySegment.ofAddress(ptr, 8, scope);
         // Output value: x = 5 and ptr's value = 5
-        System.out.printf("           x = %d    address = %x %n", x.get(C_INT, 0), x.address().toRawLongValue());
-        System.out.printf(" ptr's value = %d    address = %x %n", ptr.get(C_INT, 0), ptr.address().toRawLongValue());
+        System.out.printf("           x = %d    address = %x %n", x.get(JAVA_INT, 0), x.address().toRawLongValue());
+        System.out.printf(" ptr's value = %d    address = %x %n", ptr.get(JAVA_INT, 0), ptr.address().toRawLongValue());
 //        System.out.printf(" ptr's value = %d    address = %x %n", ptrVal.get(C_INT, 0), ptrVal.address().toRawLongValue());
 
          // Change x = 10;
-        x.set(C_INT, 0, 10);
-        System.out.printf(" Changing x's value to: %d %n", x.get(C_INT, 0));
+        x.set(JAVA_INT, 0, 10);
+        System.out.printf(" Changing x's value to: %d %n", x.get(JAVA_INT, 0));
 
         // Output after change
-        System.out.printf("           x = %d    address = %x %n", x.get(C_INT, 0), x.address().toRawLongValue());
-        System.out.printf(" ptr's value = %d    address = %x %n", ptr.get(C_INT, 0), ptr.address().toRawLongValue());
+        System.out.printf("           x = %d    address = %x %n", x.get(JAVA_INT, 0), x.address().toRawLongValue());
+        System.out.printf(" ptr's value = %d    address = %x %n", ptr.get(JAVA_INT, 0), ptr.address().toRawLongValue());
       }
    }
 }

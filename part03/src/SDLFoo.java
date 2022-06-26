@@ -1,12 +1,14 @@
 
 
-import jdk.incubator.foreign.*;
 import sdl2.SDL_Event;
 import sdl2.SDL_TextInputEvent;
 
+import java.lang.foreign.MemoryAddress;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
 import java.util.Objects;
 
-import static jdk.incubator.foreign.MemoryAddress.NULL;
+import static java.lang.foreign.MemoryAddress.NULL;
 import static sdl2.LibSDL2.GL_COLOR_BUFFER_BIT;
 import static sdl2.LibSDL2.GL_MODELVIEW;
 import static sdl2.LibSDL2.GL_NO_ERROR;
@@ -86,20 +88,20 @@ public class SDLFoo {
 
 
   public static void main(String[] args) {
-    try (var scope = ResourceScope.newConfinedScope()) {
+    try (var memorySession = MemorySession.openConfined()) {
       var sdlFoo = new SDLFoo();
 
       // Start up SDL and create window
-      if (!sdlFoo.init(scope)) {
+      if (!sdlFoo.init(memorySession)) {
         System.out.println("Failed to initialize!");
         System.exit(1);
       }
 
-      scope.addCloseAction(sdlFoo::close);
+      memorySession.addCloseAction(sdlFoo::close);
 
       // Event handling
       // Allocate SDL_Event sdlEvent; which is a union type
-      var sdlEvent = MemorySegment.allocateNative(SDL_Event.sizeof(), scope);
+      var sdlEvent = MemorySegment.allocateNative(SDL_Event.sizeof(), memorySession);
       
       // Enable text input
       SDL_StartTextInput();
@@ -125,8 +127,8 @@ public class SDLFoo {
           }
         }
 
-        sdlFoo.render(scope);
-        sdlFoo.update(scope);
+        sdlFoo.render(memorySession);
+        sdlFoo.update(memorySession);
       }
 
       //Disable text input
@@ -134,12 +136,12 @@ public class SDLFoo {
     }
   }
 
-  private void update(ResourceScope scope) {
+  private void update(MemorySession memorySession) {
     // Update a window with OpenGL rendering
     SDL_GL_SwapWindow(gWindow);
   }
 
-  private boolean init(ResourceScope scope) {
+  private boolean init(MemorySession memorySession) {
     if (SDL_Init(SDL_INIT_VIDEO()) < 0) {
       String errMsg = SDL_GetError().getUtf8String(0);
       System.out.printf("SDL could not initialize! SDL Error: %s\n", errMsg);
@@ -149,7 +151,7 @@ public class SDLFoo {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION(), 1);
 
 
-      gWindow = SDL_CreateWindow(SegmentAllocator.implicitAllocator().allocateUtf8String("SDL for Panama"),
+      gWindow = SDL_CreateWindow(memorySession.allocateUtf8String("SDL for Panama"),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SCREEN_WIDTH,
@@ -225,7 +227,7 @@ public class SDLFoo {
     SDL_Quit();
   }
 
-  private void render(ResourceScope scope) {
+  private void render(MemorySession memorySession) {
     //Clear color buffer
     glClear(GL_COLOR_BUFFER_BIT());
 

@@ -1,11 +1,10 @@
-import jdk.incubator.foreign.*;
 
+import java.lang.foreign.GroupLayout;
+import java.lang.foreign.MemoryLayout;
+import java.lang.foreign.MemorySession;
 import java.lang.invoke.VarHandle;
-import java.util.Random;
 
-import static jdk.incubator.foreign.CLinker.*;
-import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
-import static org.unix.stdio_h.C_INT;
+import static java.lang.foreign.ValueLayout.JAVA_INT;
 
 
 /**
@@ -13,9 +12,7 @@ import static org.unix.stdio_h.C_INT;
  */
 public class Structs {
     public static void main(String[] args) {
-      try (var scope = newConfinedScope()) {
-        var allocator = SegmentAllocator.implicitAllocator();
-
+      try (var memorySession = MemorySession.openConfined()) {
         /*
             struct Point {
                int x;
@@ -24,17 +21,21 @@ public class Structs {
         */
         System.out.println("\nCreate one Point struct:");
         GroupLayout pointStruct = MemoryLayout.structLayout(
-                C_INT.withName("x"),
-                C_INT.withName("y")
+                JAVA_INT.withName("x"),
+                JAVA_INT.withName("y")
         );
 
-        var cPoint = allocator.allocate(pointStruct);
+        var cPoint = memorySession.allocate(pointStruct);
         VarHandle VHx = pointStruct.varHandle(MemoryLayout.PathElement.groupElement("x"));
         VarHandle VHy = pointStruct.varHandle(MemoryLayout.PathElement.groupElement("y"));
         VHx.set(cPoint, 100);
         VHy.set(cPoint, 200);
 
+
         System.out.printf("cPoint = (%d, %d) \n",  VHx.get(cPoint), VHy.get(cPoint));
+
+//        var pCPoint = allocator.allocate(C_POINTER, cPoint);
+//        System.out.printf("pCPoint = (%d) \n",  VHx.get(pCPoint.address()));
       }
     }
 }

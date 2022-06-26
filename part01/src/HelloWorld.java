@@ -1,23 +1,21 @@
-import jdk.incubator.foreign.*;
 
-import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
-import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
-import static org.unix.stdio_h.__stdoutp$get;
-import static org.unix.stdio_h.fflush;
-import static org.unix.stdio_h.printf;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
+
+import static org.unix.stdio_h.*;
 
 /**
  * Panama Hello World calling C functions.
  */
 public class HelloWorld {
     public static void main(String[] args) {
-       try (var scope = newConfinedScope()) {
+       try (var memorySession = MemorySession.openConfined()) {
            // MemorySegment C's printf using a C string
-           MemorySegment cString = implicitAllocator().allocateUtf8String("Hello World! Panama style\n");
+           MemorySegment cString = memorySession.allocateUtf8String("Hello World! Panama style\n");
 
            // int printf(const char *format, ...);  a variadic function
            printf(cString);
-           fflush(__stdoutp$get());
+           fflush(NULL());
 
            // converting a C string (MemorySegment) into a Java String
            String jString = cString.getUtf8String(0);
@@ -26,4 +24,3 @@ public class HelloWorld {
        }
     }
 }
-

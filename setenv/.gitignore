@@ -12,3 +12,4 @@ a.out
 *.dll
 hs_err_pid*.log
 out/
+src/org/

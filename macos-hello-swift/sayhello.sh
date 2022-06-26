@@ -2,4 +2,4 @@
 swiftc sayhello.swift -emit-library -o libsayhelloswift.dylib
 
 # Run java class
-java --enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign SayHello.Java
+java -Djava.library.path=. --enable-native-access=ALL-UNNAMED --enable-preview --source 19 SayHello.java

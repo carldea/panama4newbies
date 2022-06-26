@@ -1,13 +1,13 @@
-import jdk.incubator.foreign.MemoryAddress;
-import jdk.incubator.foreign.MemorySegment;
-import jdk.incubator.foreign.ResourceScope;
-import jdk.incubator.foreign.SegmentAllocator;
+
 import sdl2.SDL_Event;
 import sdl2.SDL_TextInputEvent;
 
+import java.lang.foreign.MemoryAddress;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
 import java.util.Objects;
 
-import static jdk.incubator.foreign.MemoryAddress.NULL;
+import static java.lang.foreign.MemoryAddress.NULL;
 import static sdl2.LibSDL2.*;
 
 /**
@@ -92,28 +92,28 @@ public class SDLPrism {
   };
 
   public static void main(String[] args) {
-    try (var scope = ResourceScope.newConfinedScope()) {
+    try (var memorySession = MemorySession.openConfined()) {
       var sdlObject = new SDLPrism();
 
       // Start up SDL and create window
-      if (!sdlObject.init(scope)) {
+      if (!sdlObject.init(memorySession)) {
         System.out.println("Failed to initialize!");
         System.exit(1);
       }
 
-      scope.addCloseAction(sdlObject::close);
+      memorySession.addCloseAction(sdlObject::close);
 
       // Event handling
       // Allocate SDL_Event sdlEvent; which is a union type
-      var sdlEvent = MemorySegment.allocateNative(SDL_Event.sizeof(), scope);
+      var sdlEvent = MemorySegment.allocateNative(SDL_Event.sizeof(), memorySession);
       
       // Enable text input
       SDL_StartTextInput();
 
       // While application is running
       boolean quit = false;
-      var colorMemSeg = SegmentAllocator.implicitAllocator().allocateArray(C_FLOAT, color);
-      var verticesMemSeg = SegmentAllocator.implicitAllocator().allocateArray(C_FLOAT, prism);
+      var colorMemSeg = memorySession.allocateArray(C_FLOAT, color);
+      var verticesMemSeg = memorySession.allocateArray(C_FLOAT, prism);
 
       while (!quit) {
 
@@ -134,8 +134,8 @@ public class SDLPrism {
           }
         }
 
-        sdlObject.render(scope, colorMemSeg, verticesMemSeg);
-        sdlObject.update(scope);
+        sdlObject.render(memorySession, colorMemSeg, verticesMemSeg);
+        sdlObject.update(memorySession);
       }
 
       //Disable text input
@@ -143,12 +143,12 @@ public class SDLPrism {
     }
   }
 
-  private void update(ResourceScope scope) {
+  private void update(MemorySession memorySession) {
     // Update a window with OpenGL rendering
     SDL_GL_SwapWindow(gWindow);
   }
 
-  private boolean init(ResourceScope scope) {
+  private boolean init(MemorySession memorySession) {
     if (SDL_Init(SDL_INIT_VIDEO()) < 0) {
       String errMsg = SDL_GetError().getUtf8String(0);
       System.out.printf("SDL could not initialize! SDL Error: %s\n", errMsg);
@@ -158,7 +158,7 @@ public class SDLPrism {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION(), 1);
 
 
-      gWindow = SDL_CreateWindow(SegmentAllocator.implicitAllocator().allocateUtf8String("SDL Prism for Panama"),
+      gWindow = SDL_CreateWindow(memorySession.allocateUtf8String("SDL Prism for Panama"),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SCREEN_WIDTH,
@@ -242,7 +242,7 @@ public class SDLPrism {
     glColor3fv(colorMemSeg.asSlice(index * 12)); // 3 floats = 3 X 4 bytes = 12 bytes
     glVertex3fv(cubeMemSeg.asSlice(index * 12));
   }
-  private void render(ResourceScope scope, MemorySegment colorMemSeg, MemorySegment vertexMemSeg) {
+  private void render(MemorySession memorySession, MemorySegment colorMemSeg, MemorySegment vertexMemSeg) {
 
     /* Do our drawing, too. */
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

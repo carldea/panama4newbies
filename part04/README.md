@@ -15,8 +15,11 @@ Let's setup your environment.
 3. Setup your environment variables 
 - Unix/Linux
 ```bash
-  # JAVA_HOME Unix/Linux
+  # JAVA_HOME MacOS
   export JAVA_HOME=$HOME/sdks/jdk-19.jdk/Contents/Home
+
+  # JAVA_HOME Linux
+  export JAVA_HOME=$HOME/sdks/jdk-19
   
   # PATH
   export PATH=$JAVA_HOME/bin:$PATH
@@ -24,7 +27,7 @@ Let's setup your environment.
 - Windows Powershell
 ```bash
   # JAVA_HOME Windows
-  $env:JAVA_HOME = "$env:homedrive$env:homepath/sdks/jdk-19.jdk/Contents/Home"
+  $env:JAVA_HOME = "$env:homedrive$env:homepath/sdks/jdk-19"
   
   # PATH
   $env:PATH = "$env:JAVA_HOME/bin:$env:PATH"
@@ -39,27 +42,26 @@ OpenJDK 64-Bit Server VM (build 19-panama+1-13, mixed mode, sharing)
 ```
  - `$ jextract -h`
 ```bash
-WARNING: Using incubator modules: jdk.incubator.jextract, jdk.incubator.foreign
-Non-option arguments:  
-[String] -- header file
+Usage: jextract <options> <header file>                                  
 
-Option                         Description                              
-------                         -----------                              
--?, -h, --help                 print help                               
--C <String>                    pass through argument for clang          
--I <String>                    specify include files path               
--d <String>                    specify where to place generated files   
---dump-includes <String>       dump included symbols into specified file
---header-class-name <String>   name of the header class                 
---include-function <String>    name of function to include              
---include-macro <String>       name of constant macro to include        
---include-struct <String>      name of struct definition to include     
---include-typedef <String>     name of type definition to include       
---include-union <String>       name of union definition to include      
---include-var <String>         name of global variable to include       
--l <String>                    specify a library                        
---source                       generate java sources                    
--t, --target-package <String>  target package for specified header files
+Option                         Description                               
+------                         -----------                               
+-?, -h, --help                 print help                                
+-D <macro>                     define a C preprocessor macro             
+-I <path>                      specify include files path                
+--dump-includes <file>         dump included symbols into specified file 
+--header-class-name <name>     name of the header class                  
+--include-function <name>      name of function to include               
+--include-macro <name>         name of constant macro to include         
+--include-struct <name>        name of struct definition to include      
+--include-typedef <name>       name of type definition to include        
+--include-union <name>         name of union definition to include       
+--include-var <name>           name of global variable to include        
+-l <library>                   specify a library name or absolute library path   
+--output <path>                specify the directory to place generated files    
+--source                       generate java sources                     
+-t, --target-package <package> target package for specified header files 
+--version                      print version information and exit 
 ```
 
 

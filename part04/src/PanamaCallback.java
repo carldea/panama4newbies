@@ -1,10 +1,9 @@
-import jdk.incubator.foreign.*;
 import org.unix.foo_h;
+import java.lang.foreign.*;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
-import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
+import static java.lang.foreign.SegmentAllocator.implicitAllocator;
 import static org.unix.foo_h.*;
 
 public class PanamaCallback {
@@ -34,25 +33,29 @@ public class PanamaCallback {
      * @throws Throwable
      */
     public static void main(String[] args) throws Throwable {
-        try (var scope = newConfinedScope()) {
+        try (var memorySession = MemorySession.openConfined()) {
             // MemorySegment C's printf using a C string
             MemorySegment cString = implicitAllocator()
                     .allocateUtf8String("[Java] Callbacks! Panama style\n");
 
             printf(cString);
-            fflush(__stdoutp$get());
+            fflush(NULL());
             //fprintf(__stdoutp$get(), cString);
 
             // my_callback_function C function receives a callback (pointer to a function)
-            NativeSymbol callback1 = SymbolLookup.loaderLookup().lookup("my_callback_function").get();
-            var my_callback_functionMethodHandle = CLinker.systemCLinker().downcallHandle(
+            MemorySegment callback1 = SymbolLookup.loaderLookup().lookup("my_callback_function")
+                    .or(() -> Linker.nativeLinker().defaultLookup().lookup("my_callback_function"))
+                    .orElseThrow(() -> new RuntimeException("cant find symbol"));
+            var my_callback_functionMethodHandle = Linker.nativeLinker().downcallHandle(
                     callback1,
                     FunctionDescriptor.ofVoid(C_POINTER)
             );
 
             // my_callback_function2 C function receives a callback (pointer to a function)
-            NativeSymbol callback2 = SymbolLookup.loaderLookup().lookup("my_callback_function2").get();
-            var my_callback_function2MethodHandle = CLinker.systemCLinker().downcallHandle(
+            MemorySegment callback2 = SymbolLookup.loaderLookup().lookup("my_callback_function2")
+                    .or(() -> Linker.nativeLinker().defaultLookup().lookup("my_callback_function2"))
+                    .orElseThrow(() -> new RuntimeException("cant find symbol"));
+            var my_callback_function2MethodHandle = Linker.nativeLinker().downcallHandle(
                     callback2,
                     FunctionDescriptor.ofVoid(C_POINTER, C_INT)
             );
@@ -65,10 +68,10 @@ public class PanamaCallback {
 
             // Create a stub as a native symbol to be passed into native function.
             // void (*ptr)()
-            NativeSymbol callMePleaseNativeSymbol = CLinker.systemCLinker().upcallStub(
+            MemorySegment callMePleaseNativeSymbol = Linker.nativeLinker().upcallStub(
                     onCallMePlease,
                     FunctionDescriptor.ofVoid(),
-                    scope);
+                    memorySession);
 
             // Invoke C function receiving a callback
             // void my_callback_function(void (*ptr)())
@@ -82,10 +85,10 @@ public class PanamaCallback {
 
             // Create a stub as a native symbol to be passed into native function.
             // void (*ptr)(int)
-            NativeSymbol doubleMeNativeSymbol = CLinker.systemCLinker().upcallStub(
+            MemorySegment doubleMeNativeSymbol = Linker.nativeLinker().upcallStub(
                     onDoubleMe,
                     FunctionDescriptor.ofVoid(C_INT),
-                    scope);
+                    memorySession);
 
             // Invoke C function receiving a callback
             // void my_callback_function2(void (*ptr)(int))

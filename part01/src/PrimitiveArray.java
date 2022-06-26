@@ -1,8 +1,7 @@
-import jdk.incubator.foreign.*;
 
-import static jdk.incubator.foreign.CLinker.*;
-import static jdk.incubator.foreign.ResourceScope.newConfinedScope;
-import static jdk.incubator.foreign.SegmentAllocator.implicitAllocator;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
+
 import static org.unix.stdio_h.*;
 
 /**
@@ -10,10 +9,10 @@ import static org.unix.stdio_h.*;
  */
 public class PrimitiveArray {
     public static void main(String[] args) {
-       try (var scope = newConfinedScope()) {
+       try (var memorySession = MemorySession.openConfined()) {
 
            System.out.println("An array of data");
-           MemorySegment cDoubleArray = implicitAllocator().allocateArray(C_DOUBLE, new double[] {
+           MemorySegment cDoubleArray = memorySession.allocateArray(C_DOUBLE, new double[] {
                    1.0, 2.0, 3.0, 4.0,
                    1.0, 1.0, 1.0, 1.0,
                    3.0, 4.0, 5.0, 6.0,

@@ -1,9 +1,12 @@
+import java.lang.foreign.FunctionDescriptor;
+import java.lang.foreign.Linker;
+import java.lang.foreign.MemorySession;
 import java.lang.invoke.*;
-import jdk.incubator.foreign.*;
 import org.unix.foo_h;
 
-import static jdk.incubator.foreign.ValueLayout.JAVA_INT;
+import static java.lang.foreign.ValueLayout.JAVA_INT;
 import static org.unix.foo_h.C_INT;
+import static org.unix.foo_h.printf;
 
 /**
  * Panama 4 newbies demo of calling getpid() .
@@ -12,12 +15,11 @@ import static org.unix.foo_h.C_INT;
 public class PanamaPid {
     public static void main(String[] args) {
         // obtain a scope
-        try (var scope = ResourceScope.newConfinedScope()) {
-            var allocator = SegmentAllocator.implicitAllocator();
+        try (var memorySession = MemorySession.openConfined()) {
 
-            var cLinker = CLinker.systemCLinker();
+            var cLinker = Linker.nativeLinker();
             // Using a MethodHandle
-            MethodHandle getpidMH = cLinker.downcallHandle(cLinker.lookup("getpid").get(),
+            MethodHandle getpidMH = cLinker.downcallHandle(cLinker.defaultLookup().lookup("getpid").get(),
                     FunctionDescriptor.of(JAVA_INT));
 
             int pid	= (int) getpidMH.invokeExact();

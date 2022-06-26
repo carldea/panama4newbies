@@ -1,5 +1,5 @@
 # Generate class files
-jextract -d classes \
+jextract --output classes \
   -t org.unix \
   -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include \
   -I . \
@@ -8,7 +8,7 @@ jextract -d classes \
 
 # Generate Java source code
 jextract --source \
-  -d generated/src \
+  --output src \
   -t org.unix \
   -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include \
   -I . \

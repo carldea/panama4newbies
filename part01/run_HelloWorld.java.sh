@@ -1,4 +1,4 @@
 java -cp .:classes \
  --enable-native-access=ALL-UNNAMED \
- --add-modules jdk.incubator.foreign \
+ --enable-preview --source 19 \
  src/HelloWorld.java

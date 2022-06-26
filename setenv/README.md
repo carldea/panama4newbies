@@ -36,7 +36,7 @@ OpenJDK 64-Bit Server VM Zulu11.43+55-CA (build 11.0.9.1+1-LTS, mixed mode)
 The example changes the environment variable for child processes. For example in Panama code the following is executed subsequently:
 ```java
     // code to change PATH environment variable.
-    MemorySegment java_cstr2 = CLinker.toCString("java -version", allocator);
+    MemorySegment java_cstr2 = memorySession.allocateUtf8String("java -version");
     foo_h.system(java_cstr2);
 ```
 The child process `system()` function will run using the new PATH value.

@@ -1,10 +1,13 @@
-import jdk.incubator.foreign.*;
+
 import sdl2.SDL_Event;
 import sdl2.SDL_TextInputEvent;
 
+import java.lang.foreign.MemoryAddress;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
 import java.util.Objects;
 
-import static jdk.incubator.foreign.MemoryAddress.NULL;
+
 import static sdl2.LibSDL2.*;
 
 /**
@@ -70,28 +73,28 @@ public class SDLCube {
   };
 
   public static void main(String[] args) {
-    try (var scope = ResourceScope.newConfinedScope()) {
+    try (var memorySession = MemorySession.openConfined()) {
       var sdlCube = new SDLCube();
 
       // Start up SDL and create window
-      if (!sdlCube.init(scope)) {
+      if (!sdlCube.init(memorySession)) {
         System.out.println("Failed to initialize!");
         System.exit(1);
       }
 
-      scope.addCloseAction(sdlCube::close);
+      memorySession.addCloseAction(sdlCube::close);
 
       // Event handling
       // Allocate SDL_Event sdlEvent; which is a union type
-      var sdlEvent = MemorySegment.allocateNative(SDL_Event.sizeof(), scope);
+      var sdlEvent = memorySession.allocate(SDL_Event.sizeof());
       
       // Enable text input
       SDL_StartTextInput();
 
       // While application is running
       boolean quit = false;
-      var colorMemSeg = SegmentAllocator.implicitAllocator().allocateArray(C_FLOAT, color);
-      var cubeMemSeg = SegmentAllocator.implicitAllocator().allocateArray(C_FLOAT, cube);
+      var colorMemSeg = memorySession.allocateArray(C_FLOAT, color);
+      var cubeMemSeg = memorySession.allocateArray(C_FLOAT, cube);
 
       while (!quit) {
 
@@ -112,8 +115,8 @@ public class SDLCube {
           }
         }
 
-        sdlCube.render(scope, colorMemSeg, cubeMemSeg);
-        sdlCube.update(scope);
+        sdlCube.render(memorySession, colorMemSeg, cubeMemSeg);
+        sdlCube.update(memorySession);
       }
 
       //Disable text input
@@ -121,12 +124,12 @@ public class SDLCube {
     }
   }
 
-  private void update(ResourceScope scope) {
+  private void update(MemorySession memorySession) {
     // Update a window with OpenGL rendering
     SDL_GL_SwapWindow(gWindow);
   }
 
-  private boolean init(ResourceScope scope) {
+  private boolean init(MemorySession memorySession) {
     if (SDL_Init(SDL_INIT_VIDEO()) < 0) {
       String errMsg = SDL_GetError().getUtf8String(0);
       System.out.printf("SDL could not initialize! SDL Error: %s\n", errMsg);
@@ -136,20 +139,20 @@ public class SDLCube {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION(), 1);
 
 
-      gWindow = SDL_CreateWindow(SegmentAllocator.implicitAllocator().allocateUtf8String("SDL Cube for Panama"),
+      gWindow = SDL_CreateWindow(memorySession.allocateUtf8String("SDL Cube for Panama"),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SCREEN_WIDTH,
                                  SCREEN_HEIGHT,
                                  SDL_WINDOW_OPENGL() | SDL_WINDOW_SHOWN());
 
-      if (Objects.equals(NULL, gWindow)) {
+      if (Objects.equals(NULL(), gWindow)) {
         System.out.printf("Window could not be created! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
         return false;
       } else {
         // Initialize opengl
         gContext = SDL_GL_CreateContext(gWindow);
-        if (Objects.equals(NULL, gContext)) {
+        if (Objects.equals(NULL(), gContext)) {
           System.out.printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
           return false;
         } else {
@@ -220,7 +223,7 @@ public class SDLCube {
     glColor3fv(colorMemSeg.asSlice(index * 12)); // 3 floats = 3 X 4 bytes = 12 bytes
     glVertex3fv(cubeMemSeg.asSlice(index * 12));
   }
-  private void render(ResourceScope scope, MemorySegment colorMemSeg, MemorySegment cubeMemSeg) {
+  private void render(MemorySession memorySession, MemorySegment colorMemSeg, MemorySegment cubeMemSeg) {
 
     /* Do our drawing, too. */
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
