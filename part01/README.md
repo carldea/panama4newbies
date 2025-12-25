@@ -5,27 +5,31 @@ This is a quick intro to OpenJDK's Project Panama.
 ## Part 1 - Learning jextract and C strings, primitives and arrays types
 Clean up executables and generated code from jextract.
 ```bash
-$ ./clean.sh
+sh clean.sh
 ```
 
 Compile a Hello World C program (optional)
 ```shell
-$ ./compile_helloworld.c.sh
+sh compile_helloworld.c.sh
 ```
 
 Run Hello World C program (optional)
 ```shell
-$ ./a.out
+./a.out
+```
+Output:
+```
+Hello, World!
 ```
 
 Generate Java Panama code (from stdio.h)
 ```shell
-$ jextract_stdio.h.sh
+sh jextract_stdio.h.sh
 ```
 
 Run Java Panama Hello World using C functions
 ```shell
-$ ./run_HelloWorld.java.sh
+sh run_HelloWorld.java.sh
 ```
 
 Output shows the following:
@@ -36,17 +40,17 @@ Hello World! Panama style
 
 Run Java Panama program creating C double.
 ```shell
-$ ./run_Primitive.java.sh
+sh run_Primitive.java.sh
 ```
 
 Output shows the following:
-```shell
+```
 A slice of 3.141593 
 ```
 
 Run Java Panama program creating an array of type C double.
 ```shell
-$ ./run_PrimitiveArray.java.sh
+sh run_PrimitiveArray.java.sh
 ```
 
 Output shows the following:
