@@ -9,8 +9,7 @@ import static org.unix.stdio_h.*;
 /// 3. FFI & FFM - The final release of foreign function & memory API [(JEP 454)](https://openjdk.org/jeps/454)
 /// 4. jextract - Uses jextract jdk 25+ [jextract releases](https://jdk.java.net/jextract/) [sources](https://github.com/openjdk/jextract)
 ///
-
-/// Hello Worlds entry point main method using a concise version. Notice HelloWorld class declaration is absent.
+/// Hello World's entry point main method using a concise version. Notice HelloWorld class declaration is absent.
 void main() {
     // Use a confined arena for deterministic memory management
     try (Arena arena = Arena.ofConfined()) {

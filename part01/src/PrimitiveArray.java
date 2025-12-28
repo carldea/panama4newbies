@@ -13,7 +13,7 @@ import static org.unix.stdio_h.*;
 /// 3. FFI & FFM - The final release of foreign function & memory API [(JEP 454)](https://openjdk.org/jeps/454)
 /// 4. jextract - Uses jextract jdk 25+ [jextract releases](https://jdk.java.net/jextract/) [sources](https://github.com/openjdk/jextract)
 ///
-
+/// PrimitiveArray's main entry point.
     void main() {
         try (Arena arena = Arena.ofConfined()) {
            println("An array of data");
@@ -39,6 +39,7 @@ private static void logInfo(MemorySegment cDoubleArray) {
         if (i>0 && i % 4 == 0) {
             println();
         }
+        // obtain double from off heap array to be output through Java's system out.
         out.printf(" %f ", cDoubleArray.getAtIndex(C_DOUBLE, i ));
     }
     println();

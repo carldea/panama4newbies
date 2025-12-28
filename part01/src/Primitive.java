@@ -7,7 +7,6 @@ import static org.unix.stdio_h.*;
 /// Like the HelloWorld.java example to output a double the call to access the value as a double via
 /// `cDouble.get(C_DOUBLE, 0)`
 ///
-
 /// Main method entry point.
     void main() {
         try (Arena arena = Arena.ofConfined()) {
@@ -16,7 +15,7 @@ import static org.unix.stdio_h.*;
             // This creates a double off heap (outside jvm)
             var cDouble = arena.allocateFrom(C_DOUBLE, Math.PI);
 
-            // Creates a method handle to the printf( format C string, double value)
+            // Creates a class printf with a method handle to call the native function as printf(format C string, double value)
             var printfFun = printf.makeInvoker(C_DOUBLE); // 2nd param - defines the value type for %f
 
             // obtains the double off heap.
