@@ -27,13 +27,18 @@ $ ./structs_exe
 
 Generate Java Panama code (from stdio.h)
 ```shell
-$ ./jextract_PointersAndStructs.java.sh
+$ ./jextract_stdio.h.sh
+```
+Compile generated and example Java source code
+```shell
+$ ./compile_java_sources.sh
 ```
 
-Run Java Panama PointersAndStructs example using C functions
+Run Java Panama Pointers example using C functions
 ```shell
-$ ./run_PointersAndStructs.java.sh
+$ ./run_Pointers.java.sh
 ```
+
 Output shows the following:
 
 ```text
@@ -46,4 +51,30 @@ Creating Pointers:
 
 Create one Point struct:
 cPoint = (100, 200)
+```
+
+Run Java Panama Structs example
+```shell
+$ ./run_Structs.java.sh
+```
+
+Output shows the following:
+```text
+Create one Point struct:
+cPoint = (100, 200)
+```
+
+Run Java Panama StructsArray example
+```shell
+$ ./run_StructsArray.java.sh
+```
+
+Output shows the following:
+```text
+Create A Sequence of Point structs:
+ points[0] = (48,  83) 
+ points[1] = (15,  42) 
+ points[2] = (34,  82) 
+ points[3] = (62,  65) 
+ points[4] = (84,  36) 
 ```
