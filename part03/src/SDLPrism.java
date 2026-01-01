@@ -2,12 +2,10 @@
 import sdl2.SDL_Event;
 import sdl2.SDL_TextInputEvent;
 
-import java.lang.foreign.MemoryAddress;
+import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.MemorySession;
 import java.util.Objects;
 
-import static java.lang.foreign.MemoryAddress.NULL;
 import static sdl2.LibSDL2.*;
 
 /**
@@ -48,8 +46,8 @@ import static sdl2.LibSDL2.*;
 public class SDLPrism {
   private static final int SCREEN_WIDTH = 640;
   private static final int SCREEN_HEIGHT = 480;
-  private MemoryAddress gWindow;
-  private MemoryAddress gContext;
+  private long gWindow;
+  private long gContext;
 
   static float[] color = new float[]{
           1.0f, 1.0f, 0.0f,
@@ -92,50 +90,50 @@ public class SDLPrism {
   };
 
   public static void main(String[] args) {
-    try (var memorySession = MemorySession.openConfined()) {
+    try (var arena = Arena.ofConfined()) {
       var sdlObject = new SDLPrism();
 
       // Start up SDL and create window
-      if (!sdlObject.init(memorySession)) {
+      if (!sdlObject.init(arena)) {
         System.out.println("Failed to initialize!");
         System.exit(1);
       }
 
-      memorySession.addCloseAction(sdlObject::close);
+//      memorySession.addCloseAction(sdlObject::close);
 
       // Event handling
       // Allocate SDL_Event sdlEvent; which is a union type
-      var sdlEvent = MemorySegment.allocateNative(SDL_Event.sizeof(), memorySession);
-      
+      var sdlEvent = arena.allocate(SDL_Event.sizeof());
+
       // Enable text input
       SDL_StartTextInput();
 
       // While application is running
       boolean quit = false;
-      var colorMemSeg = memorySession.allocateArray(C_FLOAT, color);
-      var verticesMemSeg = memorySession.allocateArray(C_FLOAT, prism);
+      var colorMemSeg = arena.allocateFrom(C_FLOAT, color);
+      var verticesMemSeg = arena.allocateFrom(C_FLOAT, prism);
 
       while (!quit) {
 
         // Handle events on queue
         while (SDL_PollEvent(sdlEvent) != 0) {
           // User clicked the quit button
-          if (SDL_Event.type$get(sdlEvent) == SDL_QUIT()) {
+          if (SDL_Event.type(sdlEvent) == SDL_QUIT()) {
             quit = true;
           }
 
           // Handle keypress with current mouse position
-          else if (SDL_Event.type$get(sdlEvent) == SDL_TEXTINPUT()) {
+          else if (SDL_Event.type(sdlEvent) == SDL_TEXTINPUT()) {
             // e.text.text[ 0 ]
-            char c = SDL_TextInputEvent.text$slice(sdlEvent).getUtf8String(0).charAt(0);
+            char c = SDL_TextInputEvent.asSlice(sdlEvent, 0).getString(0).charAt(0);
             if (c == 'q') {
               quit = true;
             }
           }
         }
 
-        sdlObject.render(memorySession, colorMemSeg, verticesMemSeg);
-        sdlObject.update(memorySession);
+        sdlObject.render(arena, colorMemSeg, verticesMemSeg);
+        sdlObject.update(arena);
       }
 
       //Disable text input
@@ -143,14 +141,14 @@ public class SDLPrism {
     }
   }
 
-  private void update(MemorySession memorySession) {
+  private void update(Arena arena) {
     // Update a window with OpenGL rendering
-    SDL_GL_SwapWindow(gWindow);
+    SDL_GL_SwapWindow(MemorySegment.ofAddress(gWindow));
   }
 
-  private boolean init(MemorySession memorySession) {
+  private boolean init(Arena arena) {
     if (SDL_Init(SDL_INIT_VIDEO()) < 0) {
-      String errMsg = SDL_GetError().getUtf8String(0);
+      String errMsg = SDL_GetError().getString(0);
       System.out.printf("SDL could not initialize! SDL Error: %s\n", errMsg);
       return false;
     } else {
@@ -158,26 +156,30 @@ public class SDLPrism {
       SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION(), 1);
 
 
-      gWindow = SDL_CreateWindow(memorySession.allocateUtf8String("SDL Prism for Panama"),
+
+              MemorySegment gWindowMemSeg = SDL_CreateWindow(arena.allocateFrom("SDL Prism for Panama"),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SDL_WINDOWPOS_UNDEFINED(),
                                  SCREEN_WIDTH,
                                  SCREEN_HEIGHT,
                                  SDL_WINDOW_OPENGL() | SDL_WINDOW_SHOWN());
 
-      if (Objects.equals(NULL, gWindow)) {
-        System.out.printf("Window could not be created! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
+      gWindow = gWindowMemSeg.address();
+      if (Objects.equals(NULL(), MemorySegment.ofAddress(gWindow))) {
+        System.out.printf("Window could not be created! SDL Error: %s\n", SDL_GetError().getString(0));
         return false;
       } else {
         // Initialize opengl
-        gContext = SDL_GL_CreateContext(gWindow);
-        if (Objects.equals(NULL, gContext)) {
-          System.out.printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
+
+          MemorySegment gContextMemSeg = SDL_GL_CreateContext(gWindowMemSeg);
+          gContext = gContextMemSeg.address();
+          if (Objects.equals(NULL(), gContextMemSeg)) {
+          System.out.printf("OpenGL context could not be created! SDL Error: %s\n", SDL_GetError().getString(0));
           return false;
         } else {
           //Use Vsync
           if (SDL_GL_SetSwapInterval(1) < 0) {
-            System.out.printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError().getUtf8String(0));
+            System.out.printf("Warning: Unable to set VSync! SDL Error: %s\n", SDL_GetError().getString(0));
           }
 
 
@@ -233,7 +235,7 @@ public class SDLPrism {
   }
 
   private void close() {
-    SDL_DestroyWindow(gWindow);
+    SDL_DestroyWindow(MemorySegment.ofAddress(gWindow));
     SDL_Quit();
   }
 
@@ -242,7 +244,7 @@ public class SDLPrism {
     glColor3fv(colorMemSeg.asSlice(index * 12)); // 3 floats = 3 X 4 bytes = 12 bytes
     glVertex3fv(cubeMemSeg.asSlice(index * 12));
   }
-  private void render(MemorySession memorySession, MemorySegment colorMemSeg, MemorySegment vertexMemSeg) {
+  private void render(Arena arena, MemorySegment colorMemSeg, MemorySegment vertexMemSeg) {
 
     /* Do our drawing, too. */
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

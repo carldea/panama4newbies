@@ -1,1 +1,1 @@
-java -cp classes --enable-native-access=ALL-UNNAMED --enable-preview --source 19 src/PanamaPid.java
+java --enable-native-access=ALL-UNNAMED src/PanamaPid.java
