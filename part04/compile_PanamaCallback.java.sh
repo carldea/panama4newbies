@@ -1,4 +1,4 @@
  javac -d classes \
    -cp .:classes \
-   --enable-preview --source 19 \
+   src/org/unix/*.java \
    src/PanamaCallback.java
